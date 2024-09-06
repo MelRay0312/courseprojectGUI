@@ -15,7 +15,7 @@ public class BankAcctApp extends JFrame {
     private JTextField customerIdField, ssnField, lastNameField, firstNameField, streetField, cityField, zipField, phoneField, accountNumberField, initialBalanceField, transactionAmountField;
     private JRadioButton checkingButton, savingsButton, depositButton, withdrawButton;
     private JComboBox<String> stateDropdown;
-    private JButton addCustomerButton, displayDataButton, performTransactionButton, nextCustomerButton, clearButton, showBreakdownButton;
+    private JButton addCustomerButton, displayDataButton, performTransactionButton, nextCustomerButton, clearButton, showBreakdownButton, applyInterestButton;
     private JLabel statusLabel;
     private JTextArea transactionDetailsArea;
     private int currentCustomerIndex = 0;
@@ -127,6 +127,10 @@ public class BankAcctApp extends JFrame {
 
         showBreakdownButton = new JButton("Show Full Breakdown");
         buttonPanel.add(showBreakdownButton);
+        
+     // Add "Apply Interest" Button
+        applyInterestButton = new JButton("Apply Interest");
+        buttonPanel.add(applyInterestButton);
 
         // Clear Button
         clearButton = new JButton("Clear");
@@ -188,8 +192,34 @@ public class BankAcctApp extends JFrame {
                 clearForm();
             }
         });
+        
+     // Add action listener for Apply Interest Button
+        applyInterestButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applyInterestToCurrentAccount();
+            }
+        });
     }
     
+ // Method to apply interest to the current customer's account
+    private void applyInterestToCurrentAccount() {
+        if (customers.isEmpty()) {
+            statusLabel.setText("Error: No customer available to apply interest.");
+            return;
+        }
+        
+        Customer customer = customers.get(currentCustomerIndex);
+        Account account = customer.getAccount();
+
+        if (account instanceof CheckingAccount) {
+            ((CheckingAccount) account).applyInterest();
+            statusLabel.setText("Interest applied to Checking Account. New Balance: " + account.getBalance());
+        } else if (account instanceof SavingsAccount) {
+            ((SavingsAccount) account).applyInterest();
+            statusLabel.setText("Interest applied to Savings Account. New Balance: " + account.getBalance());
+        }
+    }
  // Validation methods for real-time validation
     private void validateCustomerId() {
         String customerId = customerIdField.getText();
@@ -457,6 +487,7 @@ public class BankAcctApp extends JFrame {
         
         account.printTransactionHistory(customer.getID());
 
+     // Update the transaction details area to reflect the new balance
         transactionDetailsArea.setText(breakdown.toString());
     }
 

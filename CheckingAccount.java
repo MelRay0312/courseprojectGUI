@@ -11,13 +11,13 @@ public class CheckingAccount extends Account implements AccountInterface {
     private String transactionType;
     private double transactionAmount;
 
-    private static final double INTEREST_RATE = 2.0;
+    private static final double INTEREST_RATE = 2.0; // 2% interest rate
 
     public CheckingAccount(String accountNumber, double balance) {
         super(accountNumber, "CHK", SERVICE_FEE, INTEREST_RATE, OVERDRAFT_FEE);
         this.balance = balance;
     }
-    
+
     public CheckingAccount(String accountNumber, String accountType, double serviceFee, double interestRate, double overdraftFee) {
         super(accountNumber, accountType, serviceFee, interestRate, overdraftFee);
     }
@@ -65,18 +65,17 @@ public class CheckingAccount extends Account implements AccountInterface {
     }
 
     // Method to apply interest
-    
     public void applyInterest() {
-        double interest = balance * (INTEREST_RATE / 100);
-        balance += interest;
-        
+        double interest = balance * (INTEREST_RATE / 100); // Calculate 2% interest
+        balance += interest; // Add interest to the balance
+
         // Set the transaction details to reflect the interest application
         try {
-            setTransactionDetails(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), "DEP", interest);
+            setTransactionDetails(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), "Interest", interest);
         } catch (ParseException e) {
             e.printStackTrace(); // Handle the exception (in practice, log this error)
         }
-        
+
         addTransaction("Interest", interest, 0.0);
         System.out.println("Interest applied to Checking Account.");
     }
